@@ -547,7 +547,7 @@ func resourceDatadogScreenboard() *schema.Resource {
 				Description: "Name of the screenboard",
 			},
 			"height": &schema.Schema{
-				Type:        schema.TypeString,
+				Type:        schema.TypeInt,
 				Optional:    true,
 				Description: "Height of the screenboard",
 			},
@@ -603,6 +603,13 @@ func setJSONNumberFromDict(dict map[string]interface{}, key string, field **json
 	}
 }
 
+func setPrecisionTFromDict(dict map[string]interface{}, key string, field **datadog.PrecisionT) {
+	if v, ok := dict[key]; ok {
+		f := datadog.PrecisionT(v.(string))
+		*field = &f
+	}
+}
+
 func setStringListFromDict(dict map[string]interface{}, key string, field *[]*string) {
 	if v, ok := dict[key].([]interface{}); ok {
 		*field = []*string{}
@@ -622,6 +629,8 @@ func setFromDict(dict map[string]interface{}, key string, field interface{}) {
 		setBoolFromDict(dict, key, field.(**bool))
 	case **json.Number:
 		setJSONNumberFromDict(dict, key, field.(**json.Number))
+	case **datadog.PrecisionT:
+		setPrecisionTFromDict(dict, key, field.(**datadog.PrecisionT))
 	case *[]*string:
 		setStringListFromDict(dict, key, field.(*[]*string))
 	default:
@@ -956,8 +965,8 @@ func buildScreenboard(d *schema.ResourceData) (*datadog.Screenboard, error) {
 	return &datadog.Screenboard{
 		Id:                datadog.Int(id),
 		Title:             datadog.String(d.Get("title").(string)),
-		Height:            datadog.String(d.Get("height").(string)),
-		Width:             datadog.String(d.Get("width").(string)),
+		Height:            datadog.Int(d.Get("height").(int)),
+		Width:             datadog.JsonNumber(json.Number(d.Get("width").(string))),
 		Shared:            datadog.Bool(d.Get("shared").(bool)),
 		ReadOnly:          datadog.Bool(d.Get("read_only").(bool)),
 		Widgets:           buildWidgets(&terraformWidgets),
@@ -1010,6 +1019,12 @@ func setJSONNumberToDict(dict map[string]interface{}, key string, field *json.Nu
 	}
 }
 
+func setPrecisionTToDict(dict map[string]interface{}, key string, field *datadog.PrecisionT) {
+	if field != nil {
+		dict[key] = string(*field)
+	}
+}
+
 func setStringListToDict(dict map[string]interface{}, key string, field []*string) {
 	if len(field) != 0 {
 		s := make([]interface{}, len(field))
@@ -1030,6 +1045,8 @@ func setToDict(dict map[string]interface{}, key string, field interface{}) {
 		setIntToDict(dict, key, field.(*int))
 	case *json.Number:
 		setJSONNumberToDict(dict, key, field.(*json.Number))
+	case *datadog.PrecisionT:
+		setPrecisionTToDict(dict, key, field.(*datadog.PrecisionT))
 	case []*string:
 		setStringListToDict(dict, key, field.([]*string))
 	default:
