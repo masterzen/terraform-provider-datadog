@@ -1,27 +1,29 @@
 package datadog
 
-import "encoding/json"
+import (
+	"encoding/json"
 
-type PrecisionT string
+	datadog "github.com/zorkian/go-datadog-api"
+)
 
 // UnmarshalJSON is a Custom Unmarshal for PrecisionT. The Datadog API can
 // return 1 (int), "1" (number, but a string type) or something like "100%" or
 // "*" (string).
-func (p *PrecisionT) UnmarshalJSON(data []byte) error {
+func (p *datadog.StrIntD) UnmarshalJSON(data []byte) error {
 	var err error
 	var precisionNum json.Number
 	if err = json.Unmarshal(data, &precisionNum); err == nil {
-		*p = PrecisionT(precisionNum)
+		*p = datadog.StrIntD(precisionNum)
 		return nil
 	}
 
 	var precisionStr string
 	if err = json.Unmarshal(data, &precisionStr); err == nil {
-		*p = PrecisionT(precisionStr)
+		*p = datadog.StrIntD(precisionStr)
 		return nil
 	}
 
-	var p0 PrecisionT
+	var p0 datadog.StrIntD
 	*p = p0
 
 	return err
@@ -34,7 +36,7 @@ type TileDef struct {
 	Viz        *string          `json:"viz,omitempty"`
 	CustomUnit *string          `json:"custom_unit,omitempty"`
 	Autoscale  *bool            `json:"autoscale,omitempty"`
-	Precision  *PrecisionT      `json:"precision,omitempty"`
+	Precision  *datadog.StrIntD `json:"precision,omitempty"`
 	TextAlign  *string          `json:"text_align,omitempty"`
 
 	// For hostmap
@@ -173,9 +175,9 @@ type Widget struct {
 	Color *string `json:"color,omitempty"`
 
 	// For AlertValue widget
-	TextSize  *string     `json:"text_size,omitempty"`
-	Unit      *string     `json:"unit,omitempty"`
-	Precision *PrecisionT `json:"precision,omitempty"`
+	TextSize  *string          `json:"text_size,omitempty"`
+	Unit      *string          `json:"unit,omitempty"`
+	Precision *datadog.StrIntD `json:"precision,omitempty"`
 
 	// AlertGraph widget
 	VizType *string `json:"viz_type,omitempty"`
@@ -187,8 +189,8 @@ type Widget struct {
 	FontSize *string `json:"font_size,omitempty"`
 
 	// For AlertValue, AlertGraph widgets
-	AlertID     *int  `json:"alert_id,omitempty"`
-	AutoRefresh *bool `json:"auto_refresh,omitempty"`
+	AlertID     *datadog.StrIntD `json:"alert_id,omitempty"`
+	AutoRefresh *bool            `json:"auto_refresh,omitempty"`
 
 	// For Timeseries, QueryValue, Toplist widgets
 	Legend     *bool   `json:"legend,omitempty"`

@@ -8,3 +8,8 @@ require (
 	github.com/kr/pretty v0.1.0
 	github.com/zorkian/go-datadog-api v2.23.0+incompatible
 )
+
+replace (
+	git.apache.org/thrift.git => github.com/apache/thrift v0.12.0
+	github.com/zorkian/go-datadog-api => github.com/masterzen/go-datadog-api v2.23.12345
+)

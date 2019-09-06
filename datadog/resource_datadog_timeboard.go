@@ -722,7 +722,7 @@ func buildGraphs(terraformGraphs *[]interface{}) (*[]datadog.Graph, error) {
 		if precision, ok := t["precision"]; ok {
 			val := precision.(string)
 			if val != "" {
-				d.Definition.SetPrecision(datadog.PrecisionT(val))
+				d.Definition.SetPrecision(datadog.StrIntD(val))
 			}
 		}
 

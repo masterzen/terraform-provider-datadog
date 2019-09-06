@@ -1944,7 +1944,7 @@ func getHostmapDefinitionSchema() map[string]*schema.Schema {
 						Optional: true,
 					},
 					"palette_flip": {
-						Type:     schema.TypeBool,
+						Type:     schema.TypeString,
 						Optional: true,
 					},
 					"fill_min": {
